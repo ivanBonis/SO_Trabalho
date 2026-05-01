@@ -1,0 +1,6 @@
+*.o
+projeto
+simulador
+*.exe
+.DS_Store
+.vscode/
