@@ -17,5 +17,16 @@ int main(int argc, char *argv[]){
     printf("Máximo de processos: %d\n", MAX_PROCESSOS);
     printf("Quantum: %d\n", QUANTUM);
 
+    // Teste de criar um processo
+
+    int indice = criarProcesso("teste.prg", 0, 0, 4, 1, 0, 4, 10);
+
+    if(indice == -1){
+        printf("Erro ao criar processo de teste\n");
+        return 1;
+    }
+
+    imprimirTabelaProcessos();
+
     return 0;
 }

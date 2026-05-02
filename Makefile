@@ -2,7 +2,7 @@ COMPILER = cc
 FLAGS = -c -Wall
 LIBS = -lm
 
-OBS = src/main.o src/fila.o src/leitor.o src/memoria.o src/escalonador.o src/executor.o src/relatorio.o
+OBS = src/main.o src/fila.o src/leitor.o src/memoria.o src/escalonador.o src/executor.o src/relatorio.o src/processo.o
 
 all: projeto
 
@@ -26,6 +26,9 @@ src/executor.o: src/executor.c
 
 src/relatorio.o: src/relatorio.c
 	$(COMPILER) $(FLAGS) src/relatorio.c -o src/relatorio.o
+
+src/processo.o: src/processo.c
+	$(COMPILER) $(FLAGS) src/processo.c -o src/processo.o
 
 projeto: $(OBS)
 	$(COMPILER) -o projeto $(OBS) $(LIBS)

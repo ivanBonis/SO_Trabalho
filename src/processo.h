@@ -24,7 +24,7 @@ typedef struct {
     int periodo;
     int deadline;
     int deadline_abs;
-    EstadoProcesso Estado;
+    EstadoProcesso estado;
 } PCB;
 
 typedef struct{
@@ -35,3 +35,16 @@ typedef struct{
     int deadline;
     int criado;
 } InfoPrograma;
+
+extern PCB tabela_processos[MAX_PROCESSOS];
+extern int total_processos;
+extern int prox_pid;
+
+void inicializarTabelaProcessos(void);
+int calcularDeadlineAbs(int tempo_chegada, int deadline);
+int criarProcesso(const char *nome_programa, int ppid, int inicio, int comprimento, int prioridade, int tempo_chegada, int periodo, int deadline);
+const char *estadoParaString(EstadoProcesso estado);
+void imprimirProcesso(int indice);
+void imprimirProcesso(int indice);
+void imprimirTabelaProcessos(void);
+PCB *obterProcessoPorIndice(int indice);
