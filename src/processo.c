@@ -35,6 +35,10 @@ void inicializarTabelaProcessos(void){
     prox_pid = 1;
 }
 
+int indiceValido(int indice){
+    return indice >= 0 && indice < total_processos;
+}
+
 // o deadline absoluto representa o instante de tempo exato onde o processo tem de terminar 
 int calcularDeadlineAbs(int tempo_chegada, int deadline){
     if(deadline > 0)
@@ -82,6 +86,130 @@ int criarProcesso(const char *nome_programa, int ppid, int inicio, int comprimen
     prox_pid++;
 
     return indice; // utilizar este indice para a fila de processos (corresponde a onde na tabela esta o processo em vez de guardar o PCB todo)
+}
+
+int criarProcessoFilho(int indice_p, int tempo_atual){
+    if(!indiceValido(indice_p))
+        return -1;
+
+    PCB *pai = &tabela_processos[indice_p];
+
+    int indice_f = criarProcesso(
+        pai->nome_programa,
+        pai->pid,
+        pai->inicio,
+        pai->comprimento,
+        pai->prioridade,
+        tempo_atual,
+        pai->periodo,
+        pai->deadline
+    );
+
+    if(indice_f <= -1)
+        return -1;
+
+    PCB *filho = &tabela_processos[indice_f];
+
+    filho->pc = pai->pc+1;
+    filho->var = pai->var;
+    filho->estado = READY;
+    filho->tempo_inicio = -1;
+    filho->tempo_fim = -1;
+    filho->deadline_abs = calcularDeadlineAbs(tempo_atual, filho->deadline);
+
+    return indice_f;
+}
+
+int terminarProcesso(int indice, int tempo_atual){
+    if(!indiceValido(indice))
+        return -1;
+
+    tabela_processos[indice].tempo_fim = tempo_atual;
+    tabela_processos[indice].estado = TERMINATED;
+    return 0;
+}
+
+int incPC(int indice){
+    if(!indiceValido(indice))
+        return -1;
+
+    tabela_processos[indice].pc++;
+    return 0;
+}
+
+int definirPC(int indice, int novo_pc){
+    if(!indiceValido(indice))
+        return -1;
+
+    if(novo_pc < 0 || novo_pc > tabela_processos[indice].comprimento)
+        return -1;
+
+    tabela_processos[indice].pc = novo_pc;
+    return 0;
+}
+
+int incTempoCPU(int indice){
+    if(!indiceValido(indice))
+        return -1;
+
+    tabela_processos[indice].tempo_cpu++;
+    return 0;
+}
+
+PCB *obterProcessoPorIndice(int indice){
+    if(indice < 0 || indice >= total_processos)
+        return NULL;
+
+    return &tabela_processos[indice];
+}
+
+
+PCB *obterProcessoPorPID(int pid){
+    for(int i=0; i < total_processos; i++){
+        if(tabela_processos[i].pid == pid)
+            return &tabela_processos[i];
+    }
+    return NULL;
+}
+
+int alterarEstadoProcesso(int indice, EstadoProcesso novo_estado){
+    if(!indiceValido(indice))
+        return -1;
+        
+    tabela_processos[indice].estado = novo_estado;
+    return 0;
+}
+
+int marcarInicioProcesso(int indice, int tempo_atual){
+    if(!indiceValido(indice))
+        return -1;
+    
+    if(tabela_processos[indice].tempo_inicio == -1)
+        tabela_processos[indice].tempo_inicio = tempo_atual;
+
+    return 0;
+}
+
+int atualizarProgramaProcesso(int indice, const char *novo_nome, int novo_inicio, int novo_comprimento){
+    if(!indiceValido(indice))
+        return -1;
+
+    if(novo_nome == NULL || novo_nome[0] == '\0')
+        return -1;
+
+    if(novo_inicio < 0 || novo_comprimento <= 0)
+        return -1;
+
+    PCB *processo = &tabela_processos[indice];
+
+    strncpy(processo->nome_programa, novo_nome, MAX_NOME_PROGRAMA - 1);
+    processo->nome_programa[MAX_NOME_PROGRAMA - 1] = '\0';
+
+    processo->inicio = novo_inicio;
+    processo->comprimento = novo_comprimento;
+    processo->pc = 0;
+
+    return 0;
 }
 
 const char *estadoParaString(EstadoProcesso estado){
@@ -134,11 +262,4 @@ void imprimirTabelaProcessos(void){
         imprimirProcesso(i);
     }
     return;
-}
-
-PCB *obterProcessoPorIndice(int indice){
-    if(indice < 0 || indice >= total_processos)
-        return NULL;
-
-    return &tabela_processos[indice];
 }

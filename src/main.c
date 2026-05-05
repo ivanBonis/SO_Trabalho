@@ -1,6 +1,5 @@
 #include<stdio.h>
 #include "config.h"
-#include "instrucao.h"
 #include "processo.h"
 
 int main(int argc, char *argv[]){
@@ -8,6 +7,8 @@ int main(int argc, char *argv[]){
         printf("USO: %s dados/plan.txt dados/control.txt [ALGORITMO]\n", argv[0]);
         return 1;
     }
+
+    inicializarTabelaProcessos();
 
     printf("Simulador de Gestão de Processos\n");
     printf("Plano: %s\n", argv[1]);
