@@ -1,5 +1,12 @@
-#define MAX_NOME_FICHEIRO 15
-#define MAX_NOME_PROGRAMA 15
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define MAX_NOME_FICHEIRO 16
+#define MAX_NOME_PROGRAMA 16
 #define TAM_MEMORIA 1000
 #define MAX_PROCESSOS 100
+#define MAX_PROGRAMAS 100
+#define MAX_COMANDOS 1000
 #define QUANTUM 3
+
+#endif
